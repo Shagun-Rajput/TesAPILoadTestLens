@@ -18,11 +18,7 @@ public class RestApiClient {
      * It can be extended to include actual logic for test execution.
      */
     public InputRecord decideCallAndCollectResponse(String apiType,String method, String apiurl, String payload, Map<String, Object> headers, Map<String, Object> params) {
-        long startTime = System.currentTimeMillis();
         Map<String, Object> responseDetails = executeApiCall(method, apiurl, payload, headers, params);
-        long responseTime = System.currentTimeMillis() - startTime;
-        responseDetails.put("responseTime", responseTime);
-        logger.info("API call to {} completed in {} ms with response code {}", apiurl, responseTime, responseDetails.get("responseCode"));
         return new InputRecord(apiType, method, apiurl, payload, headers, params,
                 responseDetails.get("responseCode").toString(),
                 responseDetails.get("responseTime").toString(),
@@ -51,18 +47,17 @@ public class RestApiClient {
 
             // Send the request and retrieve the response
             ClientResponse clientResponse;
+            long startTime = System.currentTimeMillis();
             if (payload != null && !payload.isEmpty()) {
-                Mono<ClientResponse> responseMono = requestSpec.bodyValue(payload).exchangeToMono(Mono::just);
-                clientResponse = responseMono.block();
+                clientResponse = requestSpec.bodyValue(payload).exchangeToMono(Mono::just).block();
             } else {
-                Mono<ClientResponse> responseMono = requestSpec.exchangeToMono(Mono::just);
-                clientResponse = responseMono.block();
+                clientResponse = requestSpec.exchangeToMono(Mono::just).block();
             }
-            logger.info("API call to {} with method {} completed with status code {}", apiurl, method, clientResponse != null ? clientResponse.bodyToMono(String.class).block() : "No Response");
-            // Populate response details
+            long responseTime = System.currentTimeMillis() - startTime;
             if (clientResponse != null) {
                 responseDetails.put("responseMessage", clientResponse.bodyToMono(String.class).block());
                 responseDetails.put("responseCode", clientResponse.statusCode().value());
+                responseDetails.put("responseTime", responseTime);
             }
         } catch (Exception exception) {
             responseDetails.put("responseMessage", exception.getMessage());

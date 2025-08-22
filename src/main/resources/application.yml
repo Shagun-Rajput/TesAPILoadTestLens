@@ -1,5 +1,5 @@
 server:
-    port: 4500  # Port on which the application will run
+    port: 8500  # Port on which the application will run
 
 spring:
   mvc:
