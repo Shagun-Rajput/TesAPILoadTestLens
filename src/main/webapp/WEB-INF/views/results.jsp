@@ -16,6 +16,28 @@
         h1 {
             text-align: center;
             color: #4a90e2;
+            position: relative;
+        }
+
+        .progress-circle {
+            position: absolute;
+            top: 50%;
+            right: 350px;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 100px;
+            background: conic-gradient(
+                green ${percentagePassed}%,
+                red ${percentagePassed}% 100%
+            );
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: #fff;
+            font-weight: bold;
+            margin-top: 30px;
         }
 
         table {
@@ -52,77 +74,13 @@
             font-size: 1.2em;
             margin: 0 10px;
         }
-
-        #detailsModal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            width: 50%;
-            max-width: 600px;
-        }
-
-        #modalOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
-        .modal-content {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .modal-row {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .modal-row strong {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .modal-row p {
-            margin: 0;
-            padding: 10px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            word-wrap: break-word;
-        }
-
-        .close-btn {
-            align-self: flex-end;
-            padding: 10px 20px;
-            font-size: 1em;
-            color: #fff;
-            background: #4a90e2;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .close-btn:hover {
-            background: #357ab8;
-        }
     </style>
 </head>
 <body>
-    <h1>API Test Results</h1>
+    <h1>
+        API Test Results
+        <div class="progress-circle"></div>
+    </h1>
     <div class="summary">
         <span>Total Records: ${fn:length(processedRecords)}</span>
         <span>Passed: ${passed}</span>
@@ -166,27 +124,6 @@
             </c:choose>
         </tbody>
     </table>
-
-    <!-- Modal Structure -->
-    <div id="detailsModal">
-        <div class="modal-content">
-            <h3>Record Details</h3>
-            <div class="modal-row">
-                <strong>Payload:</strong>
-                <p id="modalPayload"></p>
-            </div>
-            <div class="modal-row">
-                <strong>Headers:</strong>
-                <p id="modalHeaders"></p>
-            </div>
-            <div class="modal-row">
-                <strong>Params:</strong>
-                <p id="modalParams"></p>
-            </div>
-            <button class="close-btn" onclick="closeModal()">Close</button>
-        </div>
-    </div>
-    <div id="modalOverlay" onclick="closeModal()"></div>
 
     <script>
         function showDetails(payload, headers, params) {
