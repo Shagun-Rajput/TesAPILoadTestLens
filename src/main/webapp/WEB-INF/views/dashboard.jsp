@@ -61,6 +61,22 @@
             font-size: 1.2em;
             color: #4a90e2;
         }
+
+        .info-section {
+            text-align: center;
+            margin: 20px;
+            font-size: 1.1em;
+        }
+
+        .info-section a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .info-section a:hover {
+            text-decoration: underline;
+        }
     </style>
     <script>
         function showLoader() {
@@ -76,6 +92,9 @@
         <button type="submit">Run Tests</button>
     </form>
     <div id="loader">API runner is working, please wait for the results...</div>
+    <div class="info-section">
+        <p>Not sure about the input file format? <a href="/sampleInput">Click here</a> to view the sample input file format.</p>
+    </div>
 </body>
 </html>
 <%@ include file="footer.jsp" %>

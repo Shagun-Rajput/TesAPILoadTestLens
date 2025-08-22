@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class TestRunnerServiceImpl implements TestRunnerService {
@@ -37,34 +38,35 @@ public class TestRunnerServiceImpl implements TestRunnerService {
             Workbook workbook = new XSSFWorkbook(file.getInputStream());
             Sheet sheet = workbook.getSheetAt(0);
 
-            for (Row row : sheet) {
-                if (row.getRowNum() == 0) continue; // Skip header row
+            inputRecords = StreamSupport.stream(sheet.spliterator(), true) // Convert Sheet to Stream
+                    .filter(row -> row.getRowNum() != 0) // Skip header row
+                    .map(row -> {
+                        String apitype = (row.getCell(0) != null) ? row.getCell(0).getStringCellValue() : "";
+                        String method = (row.getCell(1) != null) ? row.getCell(1).getStringCellValue() : "";
+                        String apiurl = (row.getCell(2) != null) ? row.getCell(2).getStringCellValue() : "";
+                        String payload = (row.getCell(3) != null) ? row.getCell(3).getStringCellValue() : "";
+                        Map<String, Object> headersMap = null;
+                        Map<String, Object> paramsMap = null;
 
-                String apitype = (row.getCell(0) != null) ? row.getCell(0).getStringCellValue() : "";
-                String method = (row.getCell(1) != null) ? row.getCell(1).getStringCellValue() : "";
-                String apiurl = (row.getCell(2) != null) ? row.getCell(2).getStringCellValue() : "";
-                String payload = (row.getCell(3) != null) ? row.getCell(3).getStringCellValue() : "";
-                Map<String, Object> headersMap = null;
-                Map<String, Object> paramsMap = null;
+                        try {
+                            if (row.getCell(4) != null && !row.getCell(4).getStringCellValue().isEmpty()) {
+                                headersMap = objectMapper.readValue(row.getCell(4).getStringCellValue(), Map.class);
+                            }
+                            if (row.getCell(5) != null && !row.getCell(5).getStringCellValue().isEmpty()) {
+                                paramsMap = objectMapper.readValue(row.getCell(5).getStringCellValue(), Map.class);
+                            }
+                        } catch (JsonProcessingException jsonProcessingException) {
+                            logger.error("Error parsing JSON in row {}: {}", row.getRowNum(), jsonProcessingException.getMessage());
+                        }
 
-                try {
-                    if (row.getCell(4) != null && !row.getCell(4).getStringCellValue().isEmpty()) {
-                        headersMap = objectMapper.readValue(row.getCell(4).getStringCellValue(), Map.class);
-                    }
-                    if (row.getCell(5) != null && !row.getCell(5).getStringCellValue().isEmpty()) {
-                        paramsMap = objectMapper.readValue(row.getCell(5).getStringCellValue(), Map.class);
-                    }
-                } catch (JsonProcessingException e) {
-                    logger.error("Error parsing JSON in row {}: {}", row.getRowNum(), e.getMessage());
-                }
-
-                if (apitype == null && apiurl == null && method == null && payload == null && headersMap == null && paramsMap == null) {
-                    logger.warn("Skipping empty record at row {}", row.getRowNum());
-                    break; // Exit the loop
-                }
-
-                inputRecords.add(new InputRecord(apitype, method, apiurl, payload, headersMap, paramsMap, null, null, null));
-            }
+                        if (apitype.isEmpty() && apiurl.isEmpty() && method.isEmpty() && payload.isEmpty() && headersMap == null && paramsMap == null) {
+                            logger.warn("Skipping empty record at row {}", row.getRowNum());
+                            return null; // Skip empty rows
+                        }
+                        return new InputRecord(apitype, method, apiurl, payload, headersMap, paramsMap, null, null, null);
+                    })
+                    .filter(record -> record != null) // Remove null records
+                    .collect(Collectors.toList());
 
             // Process each record in parallel
             processedRecords = inputRecords.parallelStream()
@@ -80,7 +82,6 @@ public class TestRunnerServiceImpl implements TestRunnerService {
                         }
                     })
                     .collect(Collectors.toList());
-
             workbook.close();
         } catch (Exception exception) {
             logger.error("Error processing Excel file: ", exception);
@@ -96,6 +97,7 @@ public class TestRunnerServiceImpl implements TestRunnerService {
         model.addAttribute("failed", failed);
         model.addAttribute("percentagePassed", Math.round(percentagePassed));
         model.addAttribute("processedRecords", processedRecords);
+        logger.info("Test execution completed: {} passed, {} failed, {}% success rate", passed, failed, Math.round(percentagePassed));
         return "results";
     }
 }

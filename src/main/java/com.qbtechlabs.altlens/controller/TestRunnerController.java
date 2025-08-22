@@ -23,7 +23,7 @@ public class TestRunnerController {
      * The controller can be extended with endpoints to trigger tests, retrieve results, etc.
      * Currently, it serves as a placeholder for future test-related functionalities.
      */
-    @GetMapping("/")
+    @GetMapping("/dashboard")
     public String showDashboard() {
         return "dashboard"; // This matches the name of the JSP file (dashboard.jsp)
     }
@@ -31,6 +31,11 @@ public class TestRunnerController {
     public String runTests(@RequestParam("fileUpload") MultipartFile file, Model model) {
         logger.info("Triggering tests, it may take sometime, please wait...");
         return testRunnerService.executeAndFetchResults(file, model);
+    }
+
+    @GetMapping("/sampleInput")
+    public String sampleInput() {
+        return "sampleInput";
     }
 
 }

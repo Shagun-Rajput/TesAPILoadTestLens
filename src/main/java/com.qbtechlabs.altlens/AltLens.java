@@ -11,6 +11,7 @@ public class AltLens {
         SpringApplication.run(AltLens.class, args);
         logger.info("*******************************************************************************");
         logger.info("*************************** Altlens started successfully **********************");
+        logger.info("*** Please visit -> http://localhost:8500/dashboard to access the dashboard ***");
         logger.info("*******************************************************************************");
     }
 }

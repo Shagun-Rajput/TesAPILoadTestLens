@@ -151,7 +151,7 @@
     </div>
     <div class="action-section">
         <button onclick="resetPage()">Reset</button>
-        <button onclick="downloadResults()">Download Results/Report</button>
+        <button onclick="downloadResults()">Download Results</button>
     </div>
     <table>
         <thead>
@@ -162,7 +162,7 @@
                 <th>Response Code</th>
                 <th>Response Time (ms)</th>
                 <th>Response Message</th>
-                <th>Details</th>
+                <th>Other Details</th>
             </tr>
         </thead>
         <tbody>
