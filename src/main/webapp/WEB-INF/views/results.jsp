@@ -9,14 +9,13 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
             background: #f9f9f9;
             color: #333;
         }
 
         h1 {
             text-align: center;
-            color: #4a90e2;
+            color: #6561E8;
         }
 
         table {
@@ -32,7 +31,7 @@
         }
 
         th {
-            background-color: #4a90e2;
+            background-color: #6561E8;
             color: white;
         }
 
@@ -54,24 +53,24 @@
             margin: 0 10px;
         }
 
-        .retrigger-section {
+        .action-section {
             text-align: center;
             margin: 20px 0;
         }
 
-        .retrigger-section button {
+        .action-section button {
             margin: 0 10px;
             padding: 10px 20px;
             font-size: 1em;
             color: #fff;
-            background: #4a90e2;
+            background: #6561E8;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
-        .retrigger-section button:hover {
-            background: #357ab8;
+        .action-section button:hover {
+            background: #4a90e2;
         }
 
         #detailsModal {
@@ -131,14 +130,14 @@
             padding: 10px 20px;
             font-size: 1em;
             color: #fff;
-            background: #4a90e2;
+            background: #6561E8;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
 
         .close-btn:hover {
-            background: #357ab8;
+            background: #4a90e2;
         }
     </style>
 </head>
@@ -150,9 +149,9 @@
         <span>Failed: ${failed}</span>
         <span>Pass Percentage: ${percentagePassed}%</span>
     </div>
-    <div class="retrigger-section">
+    <div class="action-section">
         <button onclick="resetPage()">Reset</button>
-        <button onclick="retriggerTest()">Retrigger Test</button>
+        <button onclick="downloadResults()">Download Results/Report</button>
     </div>
     <table>
         <thead>
@@ -214,22 +213,29 @@
     <div id="modalOverlay" onclick="closeModal()"></div>
 
     <script>
-        function retriggerTest() {
-            fetch('/run-tests', {
-                method: 'POST',
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Test retriggered successfully!');
-                        location.reload();
-                    } else {
-                        alert('Failed to retrigger the test. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while retriggering the test.');
-                });
+        function downloadResults() {
+            const table = document.querySelector('table');
+            let csvContent = '';
+
+            // Extract table headers
+            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
+            csvContent += headers.join(',') + '\n';
+
+            // Extract table rows
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim());
+                csvContent += cells.join(',') + '\n';
+            });
+
+            // Create a Blob and trigger download
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'test_results.csv';
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function resetPage() {

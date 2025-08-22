@@ -53,15 +53,29 @@
         button:hover {
             background: #357ab8;
         }
+
+        #loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #4a90e2;
+        }
     </style>
+    <script>
+        function showLoader() {
+            document.getElementById('loader').style.display = 'block';
+        }
+    </script>
 </head>
 <body>
     <h1>AltLens - Dashboard</h1>
-    <form method="post" enctype="multipart/form-data" action="/run-tests">
+    <form method="post" enctype="multipart/form-data" action="/run-tests" onsubmit="showLoader()">
         <label for="fileUpload">Upload Test File:</label>
         <input type="file" id="fileUpload" name="fileUpload" accept=".xls,.xlsx" required />
         <button type="submit">Run Tests</button>
     </form>
+    <div id="loader">API runner is working, please wait for the results...</div>
 </body>
 </html>
 <%@ include file="footer.jsp" %>
