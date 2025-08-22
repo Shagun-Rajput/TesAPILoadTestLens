@@ -1,3 +1,4 @@
+<%@ include file="header.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -33,3 +34,4 @@
     <p id="result"></p>
 </body>
 </html>
+<%@ include file="footer.jsp" %>

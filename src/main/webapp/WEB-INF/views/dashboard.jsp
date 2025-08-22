@@ -1,3 +1,4 @@
+<%@ include file="header.jsp" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -6,7 +7,6 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
             background: #f9f9f9;
             color: #333;
         }
@@ -64,3 +64,4 @@
     </form>
 </body>
 </html>
+<%@ include file="footer.jsp" %>
