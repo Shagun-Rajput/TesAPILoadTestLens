@@ -6,6 +6,9 @@ spring:
     view:
         prefix: WEB-INF/views/
         suffix: .jsp
+  servlet:
+    multipart:
+      enabled: true  # Enable multipart support for file uploads
 
 logging:
   level:

@@ -3,8 +3,11 @@ package com.qbtechlabs.altlens.controller;
 
 import com.qbtechlabs.altlens.service.TestRunnerService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Controller
@@ -25,11 +28,9 @@ public class TestRunnerController {
         return "dashboard"; // This matches the name of the JSP file (dashboard.jsp)
     }
     @PostMapping("/run-tests")
-    public String runTests() {
-        logger.info("Running tests...");
-        // Here you would call the testRunnerService to execute tests
-        // For now, we return a simple message
-        return "Tests executed successfully!";
+    public String runTests(@RequestParam("fileUpload") MultipartFile file, Model model) {
+        logger.info("Triggering tests, it may take sometime, please wait...");
+        return testRunnerService.executeAndFetchResults(file, model);
     }
 
 }
