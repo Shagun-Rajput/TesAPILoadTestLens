@@ -1,0 +1,13 @@
+server:
+    port: 4500  # Port on which the application will run
+
+spring:
+  mvc:
+    view:
+        prefix: WEB-INF/views/
+        suffix: .jsp
+
+logging:
+  level:
+    root: INFO  # Set the logging level for the root logger
+    org.springframework.web: INFO  # Set the logging level for Spring Web
