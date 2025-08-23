@@ -239,7 +239,7 @@
         }
 
         function resetPage() {
-            window.location.href = '/';
+            window.location.href = '/dashboard';
         }
 
         function showDetails(payload, headers, params) {

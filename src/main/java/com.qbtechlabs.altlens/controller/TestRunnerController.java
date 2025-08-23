@@ -9,33 +9,35 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import static com.qbtechlabs.altlens.constants.Constants.*;
+
 
 @Controller
 public class TestRunnerController {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TestRunnerController.class);
     private final TestRunnerService testRunnerService;
     public TestRunnerController(TestRunnerService testRunnerService) {
+
         this.testRunnerService = testRunnerService;
     }
-    /*
-     * This controller is responsible for handling requests related to test execution.
-     * It uses the TestRunnerService to perform the actual test execution logic.
-     * The controller can be extended with endpoints to trigger tests, retrieve results, etc.
-     * Currently, it serves as a placeholder for future test-related functionalities.
+    /**
+     * This controller handles the main dashboard and test execution requests.
+     * It provides endpoints for displaying the dashboard, running tests, and showing sample input.
+     * The methods are designed to interact with the TestRunnerService for executing tests and fetching results.
      */
-    @GetMapping("/dashboard")
+    @GetMapping(ENDPOINT_DASHBOARD)
     public String showDashboard() {
-        return "dashboard"; // This matches the name of the JSP file (dashboard.jsp)
-    }
-    @PostMapping("/run-tests")
-    public String runTests(@RequestParam("fileUpload") MultipartFile file, Model model) {
-        logger.info("Triggering tests, it may take sometime, please wait...");
-        return testRunnerService.executeAndFetchResults(file, model);
+        return KEY_DASHBOARD;
     }
 
-    @GetMapping("/sampleInput")
+    @PostMapping(ENDPOINT_RUN_TESTS)
+    public String runTests(@RequestParam(KEY_FILE_UPLOAD) MultipartFile file, Model model) {
+        logger.info(MSG_TRIGGERRING_TEST);
+        return testRunnerService.executeAndFetchResults(file, model);
+    }
+    @GetMapping(ENDPOINT_SAMPLE_INPUT)
     public String sampleInput() {
-        return "sampleInput";
+        return KEY_SAMPLE_INPUT;
     }
 
 }
