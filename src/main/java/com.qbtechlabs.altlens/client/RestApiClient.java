@@ -68,15 +68,11 @@ public class RestApiClient {
     }
 
     private HttpMethod resolveHttpMethod(String method) {
-        switch (method.toUpperCase()) {
-            case "POST":
-                return HttpMethod.POST;
-            case "PUT":
-                return HttpMethod.PUT;
-            case "DELETE":
-                return HttpMethod.DELETE;
-            default:
-                return HttpMethod.GET;
+        try {
+            return HttpMethod.valueOf(method.toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            logger.warn("Invalid HTTP method: {}. Defaulting to GET.", method);
+            return HttpMethod.GET;
         }
     }
 }
