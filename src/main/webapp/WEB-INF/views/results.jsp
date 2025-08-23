@@ -212,36 +212,78 @@
     </div>
     <div id="modalOverlay" onclick="closeModal()"></div>
 
+    <style>
+        #detailsModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 90%; /* Adjust width to fit within the screen */
+            max-width: 600px; /* Maximum width */
+            max-height: 80%; /* Maximum height to fit within the screen */
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+        }
+
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-row {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .modal-row strong {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .modal-row p {
+            margin: 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            word-wrap: break-word;
+        }
+
+        .close-btn {
+            align-self: flex-end;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background: #6561E8;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            background: #4a90e2;
+        }
+    </style>
+
     <script>
-        function downloadResults() {
-            const table = document.querySelector('table');
-            let csvContent = '';
-
-            // Extract table headers
-            const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
-            csvContent += headers.join(',') + '\n';
-
-            // Extract table rows
-            const rows = table.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                const cells = Array.from(row.querySelectorAll('td')).map(td => td.textContent.trim());
-                csvContent += cells.join(',') + '\n';
-            });
-
-            // Create a Blob and trigger download
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'test_results.csv';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function resetPage() {
-            window.location.href = '/dashboard';
-        }
-
         function showDetails(payload, headers, params) {
             document.getElementById('modalPayload').textContent = payload || 'N/A';
             document.getElementById('modalHeaders').textContent = headers || 'N/A';
