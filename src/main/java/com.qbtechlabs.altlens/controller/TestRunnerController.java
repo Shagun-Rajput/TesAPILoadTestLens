@@ -31,9 +31,11 @@ public class TestRunnerController {
     }
 
     @PostMapping(ENDPOINT_RUN_TESTS)
-    public String runTests(@RequestParam(KEY_FILE_UPLOAD) MultipartFile file, Model model) {
+    public String runTests(@RequestParam(KEY_FILE_UPLOAD) MultipartFile file,
+                           @RequestParam(value = KEY_EMAILS, required = false) String emails,
+                           Model model) {
         logger.info(MSG_TRIGGERRING_TEST);
-        return testRunnerService.executeAndFetchResults(file, model);
+        return testRunnerService.executeAndFetchResults(file, model, emails);
     }
     @GetMapping(ENDPOINT_SAMPLE_INPUT)
     public String sampleInput() {

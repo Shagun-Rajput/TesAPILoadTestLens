@@ -3,7 +3,6 @@ package com.qbtechlabs.altlens.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.qbtechlabs.altlens.client.RestApiClient;
 import com.qbtechlabs.altlens.model.InputRecord;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,16 +21,19 @@ public class TestRunnerServiceImpl implements TestRunnerService {
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(TestRunnerServiceImpl.class);
     private final RestApiClient restApiClient;
     private final com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
-    public TestRunnerServiceImpl(RestApiClient restApiClient) {
+    private final GenReportAndSend genReportAndSend;
+    public TestRunnerServiceImpl(RestApiClient restApiClient,
+                                 GenReportAndSend genReportAndSend) {
         this.restApiClient = restApiClient;
+        this.genReportAndSend = genReportAndSend;
     }
     /**
-     * This serice is responsible for executing tests by interacting with the RestApiClient.
+     * This service is responsible for executing tests by interacting with the RestApiClient.
      * It can be extended to include methods for running specific tests, retrieving results, etc.
      * Currently, it serves as a placeholder for future test execution logic.
      */
     @Override
-    public String executeAndFetchResults(MultipartFile file, Model model) {
+    public String executeAndFetchResults(MultipartFile file, Model model, String emails) {
         List<InputRecord> inputRecords = new ArrayList<>();
         List<InputRecord> processedRecords = new ArrayList<>();
         try {
@@ -47,7 +49,6 @@ public class TestRunnerServiceImpl implements TestRunnerService {
                         String payload = (row.getCell(3) != null) ? row.getCell(3).getStringCellValue() : "";
                         Map<String, Object> headersMap = null;
                         Map<String, Object> paramsMap = null;
-
                         try {
                             if (row.getCell(4) != null && !row.getCell(4).getStringCellValue().isEmpty()) {
                                 headersMap = objectMapper.readValue(row.getCell(4).getStringCellValue(), Map.class);
@@ -97,7 +98,17 @@ public class TestRunnerServiceImpl implements TestRunnerService {
         model.addAttribute("failed", failed);
         model.addAttribute("percentagePassed", Math.round(percentagePassed));
         model.addAttribute("processedRecords", processedRecords);
+        // Call the new method to generate and send the report
+        genReportAndSend.generateAndSendReport(processedRecords, emails);
         logger.info("Test execution completed: {} passed, {} failed, {}% success rate", passed, failed, Math.round(percentagePassed));
         return "results";
     }
+    /**
+     * This method generates an Excel report from the processed records and sends it via email.
+     * It creates a new workbook, populates it with the test results, and sends it as an attachment.
+     *
+     * @param processedRecords List of processed InputRecord objects containing test results
+     * @param emails           Comma-separated string of email addresses to send the report to
+     */
+
 }

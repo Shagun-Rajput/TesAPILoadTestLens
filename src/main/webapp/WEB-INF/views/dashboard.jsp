@@ -31,11 +31,12 @@
             margin-bottom: 10px;
         }
 
-        input[type="file"] {
+        input[type="file"], input[type="text"] {
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             width: 100%;
+            margin-bottom: 15px;
         }
 
         button {
@@ -89,6 +90,10 @@
     <form method="post" enctype="multipart/form-data" action="/run-tests" onsubmit="showLoader()">
         <label for="fileUpload">Upload Test File:</label>
         <input type="file" id="fileUpload" name="fileUpload" accept=".xls,.xlsx" required />
+
+        <label for="email">Enter Email(s) to Receive Report:</label>
+        <input type="text" id="email" name="email" placeholder="Enter email(s), comma-separated" />
+
         <button type="submit">Run Tests</button>
     </form>
     <div id="loader">API runner is working, please wait for the results...</div>

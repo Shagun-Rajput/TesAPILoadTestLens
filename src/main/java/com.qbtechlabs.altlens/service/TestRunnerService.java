@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public interface TestRunnerService {
-    String executeAndFetchResults(MultipartFile file, Model model);
+    String executeAndFetchResults(MultipartFile file, Model model, String emails);
     /**
      * This service is responsible for executing tests by interacting with the RestApiClient.
      * It can be extended to include methods for running specific tests, retrieving results, etc.
