@@ -1,4 +1,4 @@
-package com.qbtechlabs.altlens.service;
+package com.qbtechlabs.altlens.service.email;
 
 import com.qbtechlabs.altlens.model.EmailMessage;
 import com.qbtechlabs.altlens.model.InputRecord;
@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +18,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class GenReportAndSend {
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(GenReportAndSend.class);
-    private final JmsTemplate jmsTemplate;
-
-    public GenReportAndSend(JmsTemplate jmsTemplate) {
-        this.jmsTemplate = jmsTemplate;
+     private final EmailSender emailSender;
+    public GenReportAndSend(EmailSender emailSender) {
+        this.emailSender = emailSender;
     }
     /**
      * This service generates an Excel report from the processed records and sends it via email.
@@ -55,8 +53,7 @@ public class GenReportAndSend {
                 row.createCell(8).setCellValue(record.getResponseMessage());
             });
 
-            // Send email with the Excel file
-            if (emails != null && !emails.isEmpty()) {
+                // Send email with the Excel file
                 List<String> emailList = List.of(emails.split("\\s*,\\s*"));
                 logger.info("Sending report to: {}", emailList);
                 try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -64,7 +61,6 @@ public class GenReportAndSend {
                     byte[] excelData = outputStream.toByteArray();
                     sendEmailWithAttachment(emailList, excelData, "Test Results.xlsx");
                 }
-            }
         } catch (Exception exception) {
             logger.error("Error generating or sending Excel file: ", exception.getMessage());
         }
@@ -81,7 +77,8 @@ public class GenReportAndSend {
         emailList.parallelStream().forEach(email -> {
             logger.info("Queuing email to: {}", email);
             EmailMessage emailMessage = new EmailMessage(email, attachmentData, fileName);
-            jmsTemplate.convertAndSend("emailQueue", emailMessage);
+            logger.info("Email message created: {}", emailMessage.toString());
+            emailSender.processEmail(emailMessage);
         });
     }
 }

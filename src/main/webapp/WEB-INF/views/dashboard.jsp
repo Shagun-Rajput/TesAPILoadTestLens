@@ -78,8 +78,18 @@
         .info-section a:hover {
             text-decoration: underline;
         }
+
+        #email-section {
+            display: none; /* Hidden by default */
+        }
     </style>
     <script>
+        function toggleEmailInput() {
+            const emailSection = document.getElementById('email-section');
+            const checkbox = document.getElementById('emailToggle');
+            emailSection.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
         function showLoader() {
             document.getElementById('loader').style.display = 'block';
         }
@@ -91,8 +101,15 @@
         <label for="fileUpload">Upload Test File:</label>
         <input type="file" id="fileUpload" name="fileUpload" accept=".xls,.xlsx" required />
 
-        <label for="email">Enter Email(s) to Receive Report:</label>
-        <input type="text" id="email" name="email" placeholder="Enter email(s), comma-separated" />
+        <label>
+            <input type="checkbox" id="emailToggle" onclick="toggleEmailInput()" />
+            You want test report on email
+        </label>
+
+        <div id="email-section">
+            <label for="email">Enter Email(s) to Receive Report:</label>
+            <input type="text" id="email" name="email" placeholder="Enter email(s), comma-separated" />
+        </div>
 
         <button type="submit">Run Tests</button>
     </form>

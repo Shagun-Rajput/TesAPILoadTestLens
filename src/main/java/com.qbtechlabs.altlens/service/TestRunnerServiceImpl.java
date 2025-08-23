@@ -3,6 +3,7 @@ package com.qbtechlabs.altlens.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.qbtechlabs.altlens.client.RestApiClient;
 import com.qbtechlabs.altlens.model.InputRecord;
+import com.qbtechlabs.altlens.service.email.GenReportAndSend;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -99,7 +100,10 @@ public class TestRunnerServiceImpl implements TestRunnerService {
         model.addAttribute("percentagePassed", Math.round(percentagePassed));
         model.addAttribute("processedRecords", processedRecords);
         // Call the new method to generate and send the report
-        genReportAndSend.generateAndSendReport(processedRecords, emails);
+        if (emails != null && !emails.isEmpty()) {
+            logger.info("Generating and sending report to: {}", emails);
+            genReportAndSend.generateAndSendReport(processedRecords, emails);
+        }
         logger.info("Test execution completed: {} passed, {} failed, {}% success rate", passed, failed, Math.round(percentagePassed));
         return "results";
     }
