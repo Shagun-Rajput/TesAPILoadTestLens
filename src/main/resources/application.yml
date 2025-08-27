@@ -2,9 +2,6 @@ server:
     port: 8500  # Port on which the application will run
 
 spring:
-  ai:
-    endpoint: https://api.openai.com/v1/chat/completions  # OpenAI API endpoint
-    api-key: ${OPENAI_API_KEY}  # OpenAI API key
   mvc:
     view:
         prefix: WEB-INF/views/
@@ -27,3 +24,7 @@ logging:
   level:
     root: INFO  # Set the logging level for the root logger
     org.springframework.web: INFO  # Set the logging level for Spring Web
+gemini:
+  api:
+    endpoint: https://generativelanguage.googleapis.com/v1beta/models/ # Gemini API endpoint
+    key: ${GEMINI_API_KEY}  # Gemini API key from environment variable
